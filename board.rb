@@ -1,7 +1,7 @@
 require_relative "tile"
 
 class Board
-  attr_reader :grid
+  attr_reader :grid, :rows
 
   def self.empty_grid
     @grid = Array.new(9) do
@@ -10,11 +10,11 @@ class Board
     grid
   end
 
-  def self.from_file(filename)
-    rows = File.readlines("filename").map(:chomp)
+  def self.generate_board_from_file(filename)
+    rows = File.readlines(filename).map(&:chomp)
     tiles = rows.map do |row|
-      nums = row.split("").map { |char| parseInt(char) }
-      nums.map { |num| Tle.new(num) }
+      nums = row.split("").map { |char| Integer(char) }
+      nums.map { |num| Tile.new(num) }
     end
 
     self.new(tiles)
@@ -22,25 +22,26 @@ class Board
 
   def initialize(grid = self.empty_grid)
     @grid = grid
+    @rows = grid.map {|row| row} #new add
   end
 
   def [](pos)
     pos = x,y
-    grid[x][y]
+    self.grid[x][y] #added self.
   end
 
   def []=(pos, value)
     x, y = pos
     tile = grid[x][y]
-    tile.value = new_value
+    tile.value = value
   end
 
   def columns
-    rows.transpose!
+    rows.transpose#!
   end
 
   def render
-    puts "(0..8).to_a.join(" ")"
+    puts "  #{(0..8).to_a.join(" ")}"
     grid.each_with_index do |row, i|
       puts "#{i} #{row.join(" ")}"
     end
@@ -51,7 +52,7 @@ class Board
     grid.size
   end
 
-  alias_method :rows, :size
+  # alias_method :rows, :size
 
   def solved?
     rows.all? { |row| solved_set?(row) } &&
@@ -61,7 +62,7 @@ class Board
 
   def solved_set?(tiles)
     nums = tiles.map(&:value)
-    nums.sort == (1..9)
+    nums.sort == (1..9).to_a #added .to_a
   end
 
   def square(idx)
