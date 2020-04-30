@@ -12,22 +12,22 @@ class SudokuGame
 
   def get_pos
     pos = nil
-    until pos && valid_val?(pos)
-      puts "Please enter a value between 1 and 9 (0 to clear the tile)"
+    until pos && valid_pos?(pos) #changed valid_val? to valid_pos?
+      puts "Please enter a position on the board (e.g., '3,4')" #changed from enter value to enter position
       print "> "
-      pos = parse_val(gets.chomp)
+      pos = parse_pos(gets.chomp) #changed parse_val to parse_pos
     end
     pos
   end
 
   def get_val
     val = nil
-    until val && valid_pos?(val)
-      puts "Please enter a position on the board (e.g., '3,4')"
+    until val && valid_val?(val) #changed valid_pos? to valid_val?
+      puts "Please enter a value between 1 and 9 (0 to clear the tile)" #changed from enter position to enter value
       print "> "
 
       begin
-        val = parse_pos(gets.chomp)
+        val = parse_val(gets.chomp) #changed parse_pos to parse_val
       rescue
         puts "Invalid position entered (did you use a comma?)"
         puts ""
@@ -49,8 +49,8 @@ class SudokuGame
   def play_turn
     board.render
 
+    pos = get_pos #swapped get_pos and get_val
     val = get_val
-    pos = get_pos
 
     board[pos] = val
   end
